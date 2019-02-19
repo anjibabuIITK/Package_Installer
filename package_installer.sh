@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Bash script to install required packages or tools after installation of new Operating System.
+# Bash script to install required packages or tools after installation of new Operating System. [Ubuntu based OS]
 #
 #  Authour: Anji Babu Kapakyala
 #           Dept. of Chemistry
