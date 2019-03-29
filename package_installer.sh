@@ -124,29 +124,6 @@ echo "$bold $red Fix Network Connection to install packages $reset"
 echo "$bold $blu Thank you $reset"
 exit
 fi
-#-------------------------------------------------#
-#/sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'
-#IP=`/sbin/ifconfig p1p1 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
-IP=`/sbin/ifconfig |grep -A4 "encap:Ethernet"|grep "inet addr" | cut -d ":" -f2 |awk '{ print $1}'`
-#cho -e "Your IP address : $IP "
-#echo -e "\e[31;44m Your IP Address : $IP \e[0m"
-#
-domine=`cat /etc/resolv.conf | sed  '/^#/d' | awk '{print $2}'|sed -n '1p'`
-DNS1=`cat /etc/resolv.conf | sed  '/^#/d' | awk '{print $2}'|sed -n '2p'`
-DNS2=`cat /etc/resolv.conf | sed  '/^#/d' | awk '{print $2}'|sed -n '3p'`
-Mask=`/sbin/ifconfig |grep -A4 "encap:Ethernet" |grep 'Mask' |awk '{ print $4 }' |cut -d ":" -f2`
-Gateway=`/sbin/ifconfig |grep -A4 "encap:Ethernet" |grep 'Mask' |awk '{ print $3 }' |cut -d ":" -f2`
-host=`hostname`
-#user=`logname`
-user=`echo $USER`
-echo "$bold IP Address  :$blue $IP $reset"
-echo "$bold Username    :$blue $user $reset"
-echo "$bold Host        :$blue $host $reset"
-echo "$bold Domine      :$blue $domine $reset"
-echo "$bold Gateway     :$blue $Gateway $reset"
-echo "$bold Subnet Mask :$blue $Mask $reset"
-echo "$bold DNS 1       :$blue $DNS1 $reset"
-echo "$bold DNS 2       :$blue $DNS2 $reset"
 }
 #----------------------------------------#
 # Update the Repository
@@ -157,7 +134,7 @@ spinner
 }
 #----------------------------------------#
 # Install packages from Ubuntu Repository
-function install_package() {
+function Install_Package() {
 echo "$bold $red Installing $1 : $reset"
 #Checking for package
 dpkg -l $1 &>/dev/null
@@ -239,80 +216,154 @@ fi
 }
 #----------------------------------------#
 # Download packages by webpages using wget
-function Download_All_Packages() {
+function Download_and_Install_All_Packages() {
 mkdir Downloaded_Packages
 echo "$bold $grn Dowloading Required Packages ..... Please wait for a while$reset "
+#-------------------------WPS OFFICE----------------------------#
  wget "http://kdl.cc.ksosoft.com/wps-community/download/6757/wps-office_10.1.0.6757_amd64.deb"&>/dev/null &
 spinner
+if [ $? -eq 0 ];then
 echo "$bold $red WPS Office has Dowloaded$reset "
- wget "http://mgltools.scripps.edu/downloads/downloads/tars/releases/REL1.5.6/mgltools_i86Linux2_1.5.6.tar.gz" &>/dev/null &
+echo "$bold $red WPS Office is Installing....$reset "
+dpkg -i wps-office*.deb
+else
+echo "$bold $red WPS Office has failed to Dowloaded$reset "
+fi
+#--------------------------MGTOOLS/ AUTODOC----------------------------#
+# dpkg -i atom-amd64.deb
+# wget "http://mgltools.scripps.edu/downloads/downloads/tars/releases/REL1.5.6/mgltools_i86Linux2_1.5.6.tar.gz" &>/dev/null &
+#tar -xvf mgltools_x86_64Linux2_1.5.6.tar.gz
+#cd mgltool*
+#./intall.sh
+#Now export the path of the bin
+#export PATH=$PATH:/home/sl302/Software/mgltools_x86_64Linux2_1.5.6/bin
+#---------------------------AUTODOCK-------------------------------------
+#For autodock and autogrid just export the path of the folder have executables
+#export PATH=$PATH:/home/sl302/Software/autodock
+#spinner
+#echo "$bold $red mgtools has Dowloaded$reset "
+# wget "https://download.sublimetext.com/sublime_text_3_build_3176_x64.tar.bz2"				
+#-----------------------------------Anaconda Installer---------------#
+echo "$bold $red Anaconda Installer is Downloading ....$reset "
+wget "https://repo.anaconda.com/archive/Anaconda3-2018.12-Linux-x86_64.sh" &>/dev/null &
 spinner
-echo "$bold $red mgtools has Dowloaded$reset "
-# wget "https://download.sublimetext.com/sublime_text_3_build_3176_x64.tar.bz2"								  #SUBLIMETEXT3#
- wget "https://repo.anaconda.com/archive/Anaconda3-2018.12-Linux-x86_64.sh" &>/dev/null &
-spinner
+if [ $? -eq 0 ];then
 echo "$bold $red Anaconda Installer has Dowloaded$reset "
+echo "$bold $red Anaconda Installer is Installing ....$reset "
+md5sum Anaconda3*.sh
+echo "$bold $red Anacont Press Enter to Install in Home directory$reset "
+bash Anaconda3*.sh
+else
+echo "$bold $red Anaconda Installer has failed Dowloaded$reset "
+fi
+#---------------------------------MENDELEY DESKTOP-----------------------#
+echo "$bold $red Mendely Desktop is Downloading ....$reset "
  wget "https://desktop-download.mendeley.com/download/apt/pool/main/m/mendeleydesktop/mendeleydesktop_1.19.3-stable_amd64.deb" &>/dev/null &
 spinner
-echo "$bold $red Mendeley Desktop has Dowloaded$reset "
- wget "https://download.teamviewer.com/download/linux/teamviewer_amd64.deb" &>/dev/null &
+if [ $? -eq 0 ];then
+echo "$bold $red Mendely has Dowloaded$reset "
+echo "$bold $red Mendely is Installing....$reset "
+dpkg -i mendeleydesktop*.deb
+else
+echo "$bold $red Mendeley is failed to Dowloaded$reset "
+fi
+#---------------------------------------Team Viewer------------------------#
+echo "$bold $red Teamviewer is Downloading ....$reset "
+wget "https://download.teamviewer.com/download/linux/teamviewer_amd64.deb" &>/dev/null &
 spinner
-echo "$bold $red Teamviewer  has Dowloaded$reset "
- wget "https://www.cgl.ucsf.edu/chimera/cgi-bin/secure/chimera-get.py?file=alpha/chimera-alpha-linux_x86_64.bin" &>/dev/null &
+if [ $? -eq 0 ];then
+echo "$bold $red Teamviwer has Dowloaded$reset "
+echo "$bold $red Teamviewer is Installing....$reset "
+dpkg -i teamviewer_*.deb
+else
+echo "$bold $red Teamviewer is failed to Dowloaded$reset "
+fi
+#-------------------------------------Chimera---------------------------------# 
+echo "$bold $red Chimera is Dowloading ...$reset "
+wget "https://www.cgl.ucsf.edu/chimera/cgi-bin/secure/chimera-get.py?file=alpha/chimera-alpha-linux_x86_64.bin" &>/dev/null &
 spinner
+if [ $? -eq 0 ];then
 echo "$bold $red Chimera has Dowloaded$reset "
- git clone "https://github.com/plumed/plumed2.git" &>/dev/null &
-spinner
-echo "$bold $red Plumed has Dowloaded$reset "
+echo "$bold $red Chimera is Installing....$reset "
+chmod +x chimera-alpha-linux_x86_64.bin
+echo "$bold $blue Enter the Current Direcry Path here....$reset "
+./chimera-alpha-linux_x86_64.bin
+
+#Enter the path of current directory. It will create a folder named chimera and install chimera in it.
+#It will also ask to create an universal link then select 1 i.e. ~/bin folder. Then no need to export the path else export the last lines.
+#If chimera is not working then export the path.
+#current_path="$PWD"
+#echo "#Path for Chimera" >> ~/.bashrc
+#echo "export PATH=\$PATH:$current_path/chimera/bin" >> ~/.bashrc
+else
+echo "$bold $red Chimera is failed to Dowloaded$reset "
+fi
+
+#-------------------------------------Plumed-------------------#
+#echo "$bold $red Chimera has Dowloaded$reset "
+# git clone "https://github.com/plumed/plumed2.git" &>/dev/null &
+#spinner
+#echo "$bold $red Plumed has Dowloaded$reset "
+#------------------------------- Atom ------------------------#
+echo "$bold $red Atom Editor is Dowloading....!$reset "
  wget "https://atom-installer.github.com/v1.34.0/atom-amd64.deb" &>/dev/null &
 spinner
+if [ $? -eq 0 ];then
 echo "$bold $red Atom Editor has Dowloaded$reset "
-# dpkg -i atom-amd64.deb
- wget "https://www.dropbox.com/download?dl=packages/ubuntu/dropbox_2019.01.31_amd64.deb" &>/dev/null &
+echo "$bold $red Atom Editor is Installing....$reset "
+dpkg -i atom-amd64.deb
+else
+echo "$bold $red Atom Editor is failed to Dowloaded$reset "
+fi
+#--------------------------------- Dropbox Desktop Client---------------------------------#
+echo "$bold $red Dropbox Desktop clint is Dowloading....!!!$reset "
+wget "https://www.dropbox.com/download?dl=packages/ubuntu/dropbox_2019.01.31_amd64.deb" &>/dev/null &
 spinner
-echo "$bold $red Dropbox Desktop clint has Dowloaded$reset "
- wget "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" &>/dev/null &
+if [ $? -eq 0 ];then
+echo "$bold $red Dropbox has Dowloaded$reset "
+echo "$bold $red Dropbox is Installing....$reset "
+dpkg -i dropbox_2019.01.31_amd64.deb
+else
+echo "$bold $red Dropbox is failed to Dowloaded$reset "
+fi
+#---------------------------------------Google Chrome-----------------------------#
+echo "$bold $red Google Chrome is Dowloading...!$reset "
+wget "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" &>/dev/null &
 spinner
-echo "$bold $red Google Chrome has Dowloaded$reset "
+if [ $? -eq 0 ];then
+echo "$bold $red Google Chrome has Dowloaded .....!$reset "
+echo "$bold $red Google Chrome is Installing....$reset "
+dpkg -i google-chrome-stable_current_amd64.deb
+else
+echo "$bold $red Google Chrome is failed to Dowloaded$reset "
+fi
 # wget "https://github.com/meetfranz/franz/releases/download/v5.0.0/franz_5.0.0_amd64.deb"						  #FRANZ#
 # ( or you can also install using sudo apt-get install franz )
 mv *.deb *.bin Downloaded_Packages
-mv plumed2 Downloaded_Packages
+#mv plumed2 Downloaded_Packages
 }
 #----------------------------------------#
 #   MAIN CODE
 #-----------------------------------------#
+# Array of packages to install
+packages="snapd paymol xfig gv gnuplot grace gromacs tree gwenview gimp git franz vlc mutt youtube-dl shutter okular pdftk krita ffmpeg texlive-latex-extra"
+# latex, ssh-server-update
+# Checking for Admin privileges
 check_for_sudo_privileges
 check_network
-#update_repository
-#Install_from_Ubuntu_Repository
-install_package snapd
-install_package paymol
-install_package xfig
-install_package gv
-install_package gnuplot
-install_package grace
-install_package gromacs
-install_package tree
-install_package gwenview
-install_package gimp
-install_package git
-install_package franz
+update_repository
+# Install_from_Ubuntu_Repository
+#Iteate the loop through PACKAGE_LIST
+for package in ${packages};do
+Install_Package $package
+done
 Install_Imp_Libraries
-install_package vlc
-install_package mutt
-install_package youtube-dl
-install_package shutter
-install_package okular
-install_package pdftk
-install_package krita
-
-#Download_All_Packages
-
+# Install using snap
 Snap_Install molden
 Snap_Install spotify
-
-
-
-
-
+# The packages which are not availble at ubuntu repository are can be downloaded and installed.
+Download_and_Install_All_Packages
+#
+#-----------------------------------------#
+#    Written By Anji Babu Kapakayala      #
+#-----------------------------------------#
